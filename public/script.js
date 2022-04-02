@@ -59,7 +59,7 @@ const clickerGame = {
                 document.getElementById(`upgrade${i}`).innerText = `Cost is ${this.upgradeSettings[i].cost}`
             }
         }
-        this.pointsElement.innerText = `You have ${this.pointsTotal} points.`
+        this.pointsElement.innerText = `You have ${Math.trunc(this.pointsTotal)} points.`
     },
 
     init: function() {
