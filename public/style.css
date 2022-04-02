@@ -1,0 +1,44 @@
+* {
+    border: 1px solid black;
+}
+
+main {
+    display: flex;
+    flex-direction: row;
+}
+
+main > #clicker-div {
+    width: 70vw;
+    height: 98vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#clicker-button {
+    margin: auto;
+    width: 20vw;
+    height: 10vw;
+    border-radius: 40%;
+    font-size: 2em;
+    color: white;
+    background-color: blue;
+}
+
+#clicker-button:hover {
+    background-color: darkblue;
+}
+
+#points-view {
+    text-align: center;
+}
+
+#upgrades-div {
+    width: 29vw;
+    height: 98vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#upgrades-div > * {
+    font-size: 1.5em;
+}
