@@ -1,20 +1,8 @@
-class Upgrade {
-    constructor(base, mult, cost, target) {
-        this.base = base
-        this.mult = mult
-        this.cost = cost
-        this.target = target
-    }
-
-    use() {
-        if (this.target.pointsTotal > this.cost) {
-            this.target.pointsTotal -= this.cost
-            this.target.pointsBase += this.base
-            this.target.pointsMultiplier += this.mult
-            this.cost = this.cost * 2
-            this.base = this.base * 1.5
-            this.mult = this.base * 1.5
-        }    
+const shortifyNumber = (num) => {
+    if (num > 999 && num < 10000) {
+        return String(num).charAt(0) + '.' + String(num).charAt(1) + 'k';
+    } else {
+        return num
     }
 }
 
@@ -22,7 +10,7 @@ const clickerGame = {
     buttonElement: document.getElementById('clicker-button'),
     pointsElement: document.getElementById('points-view'),
 
-    pointsTotal: 0,
+    pointsTotal: 1000,
 
     pointsMultiplier : 1,
     pointsBase: 1,
@@ -30,8 +18,7 @@ const clickerGame = {
     upgradeSettings: [
         {base: 1, mult: 0 , cost: 50},
         {base: 0, mult: 1.5 , cost: 1000},
-        {base: 2, mult: 0 , cost: 10},
-        {base: 0, mult: 2 , cost: 100}
+        {base: 2, mult: 0 , cost: 10, auto: true}
     ],
 
     setupUpgrades: function() {
@@ -42,8 +29,8 @@ const clickerGame = {
                         this.pointsTotal -= this.upgradeSettings[i].cost
                         this.pointsBase += this.upgradeSettings[i].base
                         this.pointsMultiplier += this.upgradeSettings[i].mult
-                        this.upgradeSettings[i].cost *= 2
-                        this.upgradeSettings[i].base *= 1.5
+                        this.upgradeSettings[i].cost *= 4
+                        this.upgradeSettings[i].base *= 2
                         this.upgradeSettings[i].mult *= 1.5
                         this.updateDisplays()
                     }
@@ -62,11 +49,51 @@ const clickerGame = {
         this.pointsElement.innerText = `You have ${Math.trunc(this.pointsTotal)} points.`
     },
 
+    click: function() {
+        this.pointsTotal += (this.pointsBase * this.pointsMultiplier)
+        this.pointsElement.innerText = `You have ${Math.trunc(this.pointsTotal)} points.`
+    },
+
     init: function() {
+        let lastKey = null
+        document.addEventListener('keydown', (e) => {
+            if (!lastKey) {
+                switch (e.key) {
+                    case '1':
+                        lastKey = '1';
+                        console.log(lastKey)
+                        break;
+                }
+            } else if (lastKey.length < 3) {
+                switch (e.key) {
+                    case '4':
+                        lastKey += '4'
+                        console.log(lastKey)
+                        break;
+                    case '6':
+                        lastKey += '6'
+                        console.log(lastKey)
+                        break;
+                    default:
+                        lastKey = null
+                        break;
+                }
+            } else {
+                switch (e.key) {
+                    case '9':
+                        this.pointsTotal += 1000
+                        this.updateDisplays()
+                        lastKey = null
+                        break;
+                    default:
+                        lastKey = null
+                        break;
+                }
+            }
+        })
         this.setupUpgrades()
         this.buttonElement.addEventListener('click', (e) => {
-            this.pointsTotal += (this.pointsBase * this.pointsMultiplier)
-            this.pointsElement.innerText = `You have ${Math.trunc(this.pointsTotal)} points.`
+            this.click()
         })
     }
 }

@@ -8,6 +8,8 @@ main {
 }
 
 main > #clicker-div {
+    background-image: url('./assets/castle-background.png');
+    background-size: cover;
     width: 70vw;
     height: 98vh;
     display: flex;
@@ -18,21 +20,27 @@ main > #clicker-div {
     margin: auto;
     width: 20vw;
     height: 10vw;
-    border-radius: 40%;
+    border-radius: 10em;
     font-size: 2em;
     color: white;
-    background-color: blue;
+    background-color: lightseagreen;
 }
 
 #clicker-button:hover {
-    background-color: darkblue;
+    background-color: seagreen;
 }
 
 #points-view {
     text-align: center;
+    background-color: white;
+    margin: 5vh auto auto auto;
+    padding: 0.5em;
+    border-radius: 10em;
+    width: 25vw;
 }
 
 #upgrades-div {
+    background-color: grey;
     width: 29vw;
     height: 98vh;
     display: flex;
@@ -41,4 +49,9 @@ main > #clicker-div {
 
 #upgrades-div > * {
     font-size: 1.5em;
+    background-color: white;
+}
+
+body {
+    background-color: orange;
 }
