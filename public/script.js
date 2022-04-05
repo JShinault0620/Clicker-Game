@@ -1,37 +1,59 @@
-const shortifyNumber = (num) => {
-    if (num > 999 && num < 10000) {
-        return String(num).charAt(0) + '.' + String(num).charAt(1) + 'k';
-    } else {
-        return num
-    }
-}
-
 const clickerGame = {
     buttonElement: document.getElementById('clicker-button'),
     pointsElement: document.getElementById('points-view'),
 
-    pointsTotal: 1000,
+    pointsTotal: 0,
 
     pointsMultiplier : 1,
     pointsBase: 1,
 
+    autoRate: 0,
+
     upgradeSettings: [
         {base: 1, mult: 0 , cost: 50},
         {base: 0, mult: 1.5 , cost: 1000},
-        {base: 2, mult: 0 , cost: 10, auto: true}
+        {base: 1, mult: 0 , cost: 100, auto: true}
     ],
+
+    shortifyNumber: function(num) {
+        let string = String(num)
+        if (string.length < 4) {
+            return string
+        } else if (string.length > 5) {
+            string = `${string.charAt(0) + string.charAt(1) + string.charAt(2)}.${string.charAt(3)}k`
+            return string
+        } else if (string.length > 4) {
+            string = `${string.charAt(0) + string.charAt(1)}.${string.charAt(2)}k`
+            return string
+        } else if (string.length > 3) {
+            string = `${string.charAt(0)}.${string.charAt(1)}k`
+            return string
+        }
+    },
+
+    autoclicker: function() {
+        setInterval(() => {
+            this.click(this.autoRate)
+        }, 1000);
+    },
 
     setupUpgrades: function() {
         for (let i = 0; i < this.upgradeSettings.length; i ++) {
             if (document.getElementById(`upgrade${i}`)) {
                 document.getElementById(`upgrade${i}`).addEventListener('click', (e) => {
-                    if (this.pointsTotal >= this.upgradeSettings[i].cost) {
+                    if (this.pointsTotal >= this.upgradeSettings[i].cost && !this.upgradeSettings[i].auto) {
                         this.pointsTotal -= this.upgradeSettings[i].cost
                         this.pointsBase += this.upgradeSettings[i].base
                         this.pointsMultiplier += this.upgradeSettings[i].mult
                         this.upgradeSettings[i].cost *= 4
                         this.upgradeSettings[i].base *= 2
                         this.upgradeSettings[i].mult *= 1.5
+                        this.updateDisplays()
+                    } else if (this.pointsTotal >= this.upgradeSettings[i].cost && this.upgradeSettings[i].auto) {
+                        this.pointsTotal -= this.upgradeSettings[i].cost
+                        this.autoRate += this.upgradeSettings[i].base
+                        this.upgradeSettings[i].cost *= 10
+                        this.upgradeSettings[i].base *= 1.5
                         this.updateDisplays()
                     }
                 })
@@ -46,12 +68,12 @@ const clickerGame = {
                 document.getElementById(`upgrade${i}`).innerText = `Cost is ${this.upgradeSettings[i].cost}`
             }
         }
-        this.pointsElement.innerText = `You have ${Math.trunc(this.pointsTotal)} points.`
+        this.pointsElement.innerText = `You have ${this.shortifyNumber(Math.trunc(this.pointsTotal))} points.`
     },
 
-    click: function() {
-        this.pointsTotal += (this.pointsBase * this.pointsMultiplier)
-        this.pointsElement.innerText = `You have ${Math.trunc(this.pointsTotal)} points.`
+    click: function(rate = 1) {
+        this.pointsTotal += (this.pointsBase * this.pointsMultiplier) * rate
+        this.pointsElement.innerText = `You have ${this.shortifyNumber(Math.trunc(this.pointsTotal))} points.`
     },
 
     init: function() {
@@ -95,6 +117,7 @@ const clickerGame = {
         this.buttonElement.addEventListener('click', (e) => {
             this.click()
         })
+        this.autoclicker()
     }
 }
 
