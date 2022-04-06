@@ -60,3 +60,12 @@ main > #clicker-div {
 body {
     background-color: orange;
 }
+
+.floating-text {
+    border: none;
+    color: darkorange;
+    text-shadow: 1px 1px 4px black;
+    position: fixed;
+    z-index: 100;
+    pointer-events: none;
+}

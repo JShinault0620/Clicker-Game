@@ -9,6 +9,8 @@ const clickerGame = {
 
     autoRate: 0,
 
+    clickCount: 0,
+
     upgradeSettings: [
         {base: 1, mult: 0 , cost: 50},
         {base: 0, mult: 1.5 , cost: 1000},
@@ -35,6 +37,21 @@ const clickerGame = {
         setInterval(() => {
             this.click(this.autoRate)
         }, 1000);
+    },
+
+    floatingText: function(amount) {
+        if (amount !== 0) {
+            let floatingText = document.createElement('h2')
+            floatingText.style.left = (this.buttonElement.offsetLeft + Math.floor(Math.random() * 300)) + 'px'
+            floatingText.style.top = (this.buttonElement.offsetTop + Math.floor(Math.random() * -50)) + 'px'
+            floatingText.innerText = `+ ${amount}`
+            floatingText.id = 'floating-text' + this.clickCount
+            floatingText.className = 'floating-text'
+            document.querySelector('main').append(floatingText)
+            setTimeout(() => {
+                floatingText.remove()
+            }, 1000)
+        }
     },
 
     setupUpgrades: function() {
@@ -74,6 +91,8 @@ const clickerGame = {
     click: function(rate = 1) {
         this.pointsTotal += (this.pointsBase * this.pointsMultiplier) * rate
         this.pointsElement.innerText = `You have ${this.shortifyNumber(Math.trunc(this.pointsTotal))} points.`
+        this.floatingText((this.pointsBase * this.pointsMultiplier) * rate)
+        clickCount ++
     },
 
     init: function() {
