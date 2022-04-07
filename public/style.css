@@ -18,13 +18,10 @@ main > #clicker-div {
 }
 
 #clicker-button {
+    content: url('./assets/hay-target.png');
     margin: auto;
     width: 20vw;
-    height: 10vw;
-    border-radius: 10em;
-    font-size: 2em;
-    color: white;
-    background-color: lightseagreen;
+    border: none;
 }
 
 #clicker-button:hover {
