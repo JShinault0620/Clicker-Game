@@ -18,8 +18,28 @@ const clickerGame = {
     ],
 
     shortifyNumber: function(num) {
-        let string = String(num)
+        let string = String(Math.trunc(num))
         if (string.length < 4) {
+            return string
+        } else if (string.length > 12) {
+            return string
+        } else if (string.length > 11) {
+            string = `${string.charAt(0) + string.charAt(1) + string.charAt(2)}.${string.charAt(3)}b`
+            return string
+        } else if (string.length > 10) {
+            string = `${string.charAt(0) + string.charAt(1)}.${string.charAt(2)}b`
+            return string
+        } else if (string.length > 9) {
+            string = `${string.charAt(0)}.${string.charAt(1)}b`
+            return string
+        } else if (string.length > 8) {
+            string = `${string.charAt(0) + string.charAt(1) + string.charAt(2)}.${string.charAt(3)}m`
+            return string
+        } else if (string.length > 7) {
+            string = `${string.charAt(0) + string.charAt(1)}.${string.charAt(2)}m`
+            return string
+        } else if (string.length > 6) {
+            string = `${string.charAt(0)}.${string.charAt(1)}m`
             return string
         } else if (string.length > 5) {
             string = `${string.charAt(0) + string.charAt(1) + string.charAt(2)}.${string.charAt(3)}k`
@@ -44,7 +64,7 @@ const clickerGame = {
             let floatingText = document.createElement('h2')
             floatingText.style.left = (this.buttonElement.offsetLeft + Math.floor(Math.random() * 300)) + 'px'
             floatingText.style.top = (this.buttonElement.offsetTop + Math.floor(Math.random() * -50)) + 'px'
-            floatingText.innerText = `+ ${amount}`
+            floatingText.innerText = `+ ${this.shortifyNumber(amount)}`
             floatingText.id = 'floating-text' + this.clickCount
             floatingText.className = 'floating-text'
             document.querySelector('main').append(floatingText)
@@ -82,7 +102,7 @@ const clickerGame = {
     updateDisplays: function() {
         for (let i = 0; i < this.upgradeSettings.length; i ++) {
             if (document.getElementById(`upgrade${i}`)) {
-                document.getElementById(`upgrade${i}`).innerText = `Cost is ${this.upgradeSettings[i].cost}`
+                document.getElementById(`upgrade${i}`).innerText = `Cost is ${this.shortifyNumber(this.upgradeSettings[i].cost)}`
             }
         }
         this.pointsElement.innerText = `You have ${this.shortifyNumber(Math.trunc(this.pointsTotal))} points.`
