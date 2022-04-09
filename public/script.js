@@ -1,6 +1,6 @@
 const clickerGame = {
-    buttonElement: document.getElementById('clicker-button'),
-    pointsElement: document.getElementById('points-view'),
+    buttonElement: $('#clicker-button'),
+    pointsElement: $('#points-view'),
 
     pointsTotal: 0,
 
@@ -61,13 +61,10 @@ const clickerGame = {
 
     floatingText: function(amount) {
         if (amount !== 0) {
-            let floatingText = document.createElement('h2')
-            floatingText.style.left = (this.buttonElement.offsetLeft + Math.floor(Math.random() * 300)) + 'px'
-            floatingText.style.top = (this.buttonElement.offsetTop + Math.floor(Math.random() * -50)) + 'px'
-            floatingText.innerText = `+ ${this.shortifyNumber(amount)}`
-            floatingText.id = 'floating-text' + this.clickCount
-            floatingText.className = 'floating-text'
-            document.querySelector('main').append(floatingText)
+            let floatingText = $(`<h2 id = "floating-text${this.clickCount}" class = "floating-text">+ ${this.shortifyNumber(amount)}</h2>`)
+            floatingText.css('left', (this.buttonElement.offset().left + Math.floor(Math.random() * 300)) + 'px')
+            floatingText.css('top', (this.buttonElement.offset().top + Math.floor(Math.random() * -50)) + 'px')
+            $('body').append(floatingText)
             setTimeout(() => {
                 floatingText.remove()
             }, 1000)
@@ -76,8 +73,8 @@ const clickerGame = {
 
     setupUpgrades: function() {
         for (let i = 0; i < this.upgradeSettings.length; i ++) {
-            if (document.getElementById(`upgrade${i}`)) {
-                document.getElementById(`upgrade${i}`).addEventListener('click', (e) => {
+            if ($(`#upgrade${i}`)) {
+                $(`#upgrade${i}`).on('click', (e) => {
                     if (this.pointsTotal >= this.upgradeSettings[i].cost && !this.upgradeSettings[i].auto) {
                         this.pointsTotal -= this.upgradeSettings[i].cost
                         this.pointsBase += this.upgradeSettings[i].base
@@ -101,31 +98,35 @@ const clickerGame = {
     
     updateDisplays: function() {
         for (let i = 0; i < this.upgradeSettings.length; i ++) {
-            if (document.getElementById(`upgrade${i}`)) {
+            if ($(`#upgrade${i}`)) {
                 if (!this.upgradeSettings[i].auto) {
                     if (this.upgradeSettings[i].base > this.upgradeSettings[i].mult) {
-                        document.getElementById(`upgrade${i}`).innerText = `Sharpen sword: ${this.upgradeSettings[i].cost}`
+                        $(`#upgrade${i}`).text(`Sharpen sword: ${this.upgradeSettings[i].cost}`)
                     } else {
-                        document.getElementById(`upgrade${i}`).innerText = `Train with knights: ${this.upgradeSettings[i].cost}`
+                        $(`#upgrade${i}`).text(`Train with knights: ${this.upgradeSettings[i].cost}`)
                     }
                 } else {
-                    document.getElementById(`upgrade${i}`).innerText = `Recruit squire: ${this.upgradeSettings[i].cost}`
+                    $(`#upgrade${i}`).text(`Recruit squire: ${this.upgradeSettings[i].cost}`)
                 }
             }
         }
-        this.pointsElement.innerText = `You have ${this.shortifyNumber(Math.trunc(this.pointsTotal))} points.`
+        this.pointsElement.text(`You have ${this.shortifyNumber(Math.trunc(this.pointsTotal))} points.`)
     },
 
     click: function(rate = 1) {
         this.pointsTotal += (this.pointsBase * this.pointsMultiplier) * rate
-        this.pointsElement.innerText = `You have ${this.shortifyNumber(Math.trunc(this.pointsTotal))} points.`
+        this.pointsElement.text(`You have ${this.shortifyNumber(Math.trunc(this.pointsTotal))} points.`)
         this.floatingText((this.pointsBase * this.pointsMultiplier) * rate)
-        clickCount ++
+        this.clickCount ++
+    },
+
+    randomBonus: function(multiplier = 1) {
+
     },
 
     cheatCode: function(amount = 1000) {
         let lastKey = null
-        document.addEventListener('keydown', (e) => {
+        $(document).on('keydown', (e) => {
             if (!lastKey) {
                 switch (e.key) {
                     case '1':
@@ -171,7 +172,7 @@ const clickerGame = {
     init: function() {
         this.cheatCode(10000)
         this.setupUpgrades()
-        this.buttonElement.addEventListener('click', (e) => {
+        this.buttonElement.on('click', (e) => {
             this.click()
         })
         this.autoclicker()
