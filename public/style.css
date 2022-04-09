@@ -65,4 +65,16 @@ body {
     position: fixed;
     z-index: 100;
     pointer-events: none;
+    animation: fadeOut 1s;
+}
+
+@keyframes fadeOut {
+    25% {
+        opacity: 1
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
 }

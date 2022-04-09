@@ -98,11 +98,19 @@ const clickerGame = {
         }
         this.updateDisplays()
     },
-
+    
     updateDisplays: function() {
         for (let i = 0; i < this.upgradeSettings.length; i ++) {
             if (document.getElementById(`upgrade${i}`)) {
-                document.getElementById(`upgrade${i}`).innerText = `Cost is ${this.shortifyNumber(this.upgradeSettings[i].cost)}`
+                if (!this.upgradeSettings[i].auto) {
+                    if (this.upgradeSettings[i].base > this.upgradeSettings[i].mult) {
+                        document.getElementById(`upgrade${i}`).innerText = `Sharpen sword: ${this.upgradeSettings[i].cost}`
+                    } else {
+                        document.getElementById(`upgrade${i}`).innerText = `Train with knights: ${this.upgradeSettings[i].cost}`
+                    }
+                } else {
+                    document.getElementById(`upgrade${i}`).innerText = `Recruit squire: ${this.upgradeSettings[i].cost}`
+                }
             }
         }
         this.pointsElement.innerText = `You have ${this.shortifyNumber(Math.trunc(this.pointsTotal))} points.`
@@ -115,7 +123,7 @@ const clickerGame = {
         clickCount ++
     },
 
-    init: function() {
+    cheatCode: function(amount = 1000) {
         let lastKey = null
         document.addEventListener('keydown', (e) => {
             if (!lastKey) {
@@ -125,14 +133,20 @@ const clickerGame = {
                         console.log(lastKey)
                         break;
                 }
-            } else if (lastKey.length < 3) {
+            } else if (lastKey.length < 2) {
                 switch (e.key) {
-                    case '4':
-                        lastKey += '4'
-                        console.log(lastKey)
-                        break;
                     case '6':
                         lastKey += '6'
+                        console.log(lastKey)
+                        break;
+                    default:
+                        lastKey = null
+                        break;
+                }
+            } else if (lastKey.length < 3) {
+                switch (e.key) {
+                    case ('4'):
+                        lastKey += '4'
                         console.log(lastKey)
                         break;
                     default:
@@ -142,7 +156,7 @@ const clickerGame = {
             } else {
                 switch (e.key) {
                     case '9':
-                        this.pointsTotal += 1000
+                        this.pointsTotal += amount
                         this.updateDisplays()
                         lastKey = null
                         break;
@@ -152,6 +166,10 @@ const clickerGame = {
                 }
             }
         })
+    },
+
+    init: function() {
+        this.cheatCode(10000)
         this.setupUpgrades()
         this.buttonElement.addEventListener('click', (e) => {
             this.click()
