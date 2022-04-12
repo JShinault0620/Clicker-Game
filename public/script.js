@@ -113,7 +113,7 @@ const clickerGame = {
 
     floatingText: function(amount) {
         if (amount !== 0) {
-            let floatingText = $(`<h2 id="floating-text${this.clickCount}" class="floating-text">+ ${this.shortifyNumber(amount)}</h2>`)
+            let floatingText = $(`<h1 id="floating-text${this.clickCount}" class="floating-text">+ ${this.shortifyNumber(amount)}</h1>`)
             floatingText.css('left', (this.buttonElement.offset().left + Math.floor(Math.random() * 300)) + 'px')
             floatingText.css('top', (this.buttonElement.offset().top + Math.floor(Math.random() * -50)) + 'px')
             $('body').append(floatingText)
@@ -221,7 +221,6 @@ const clickerGame = {
             this.click()
         })
         this.autoclicker()
-        this.randomBonus()
     }
 }
 
