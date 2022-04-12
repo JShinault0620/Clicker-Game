@@ -11,6 +11,16 @@ const clickerGame = {
 
     clickCount: 0,
 
+    bonus: {
+        active: false,
+        id: null,
+        top: 0,
+        left: 0,
+        timer: 0,
+        interval: null,
+    },
+
+
     upgradeSettings: [
         {base: 1, mult: 0 , cost: 50},
         {base: 0, mult: 1.5 , cost: 1000},
@@ -19,49 +29,91 @@ const clickerGame = {
 
     shortifyNumber: function(num) {
         let string = String(Math.trunc(num))
-        if (string.length < 4) {
+
+        const oneDigit = (end) => {
+            string = `${string.charAt(0)}.${string.charAt(1) + end}`
             return string
-        } else if (string.length > 12) {
+        }
+
+        const twoDigit = (end) => {
+            string = `${string.charAt(0) + string.charAt(1)}.${string.charAt(2) + end}`
             return string
-        } else if (string.length > 11) {
-            string = `${string.charAt(0) + string.charAt(1) + string.charAt(2)}.${string.charAt(3)}b`
+        }
+
+        const threeDigit = (end) => {
+            string = `${string.charAt(0) + string.charAt(1) + string.charAt(2)}.${string.charAt(3) + end}`
             return string
-        } else if (string.length > 10) {
-            string = `${string.charAt(0) + string.charAt(1)}.${string.charAt(2)}b`
-            return string
-        } else if (string.length > 9) {
-            string = `${string.charAt(0)}.${string.charAt(1)}b`
-            return string
-        } else if (string.length > 8) {
-            string = `${string.charAt(0) + string.charAt(1) + string.charAt(2)}.${string.charAt(3)}m`
-            return string
-        } else if (string.length > 7) {
-            string = `${string.charAt(0) + string.charAt(1)}.${string.charAt(2)}m`
-            return string
-        } else if (string.length > 6) {
-            string = `${string.charAt(0)}.${string.charAt(1)}m`
-            return string
-        } else if (string.length > 5) {
-            string = `${string.charAt(0) + string.charAt(1) + string.charAt(2)}.${string.charAt(3)}k`
-            return string
-        } else if (string.length > 4) {
-            string = `${string.charAt(0) + string.charAt(1)}.${string.charAt(2)}k`
-            return string
-        } else if (string.length > 3) {
-            string = `${string.charAt(0)}.${string.charAt(1)}k`
-            return string
+        }
+
+        switch (string.length) {
+            case 4:
+                return oneDigit('k');
+            case 5:
+                return twoDigit('k');
+            case 6:
+                return threeDigit('k');
+            case 7:
+                return oneDigit('m');
+            case 8:
+                return twoDigit('m');
+            case 9:
+                return threeDigit('m');
+            case 10:
+                return oneDigit('b');
+            case 11:
+                return twoDigit('b');
+            case 12:
+                return threeDigit('b');
+            default:
+                return string
         }
     },
 
     autoclicker: function() {
         setInterval(() => {
             this.click(this.autoRate)
+            this.randomBonus()
         }, 1000);
     },
 
+    randomBonus: function () {
+        if (!this.bonus.active && Math.floor(Math.random() * 100) === 77) {
+            this.bonus.active = true
+            this.bonus.id = `#bonus${this.clickCount}`
+            let bonus = $(`<h2 class="bonus" id="bonus${this.clickCount}">Money</h2>`)
+            bonus.on('click', (e) => {
+                this.click(this.autoRate * 30)
+                this.bonus.active = false
+                bonus.remove()
+                this.bonus.timer = 0
+                this.bonus.top = 0
+                this.bonus.left = 0
+                clearInterval(this.bonus.interval)
+            })
+            bonus.css({top: `${this.bonus.top}px`, left: `${this.bonus.left}px`,})
+            $('body').append(bonus)
+            this.bonus.interval = setInterval(() => {
+                this.bonus.top += 30
+                this.bonus.left += 35
+                $(this.bonus.id).css({top: `${this.bonus.top}px`, left: `${this.bonus.left}px`,})
+                if (this.bonus.timer > 9) {
+                    $(this.bonus.id).remove()
+                    this.bonus.active = false
+                    this.bonus.timer = 0
+                    this.bonus.top = 0
+                    this.bonus.left = 0
+                    clearInterval(this.bonus.interval)
+                }
+            }, 100)
+        } else if (this.bonus.active) {
+            this.bonus.timer ++
+        }
+    },
+
+
     floatingText: function(amount) {
         if (amount !== 0) {
-            let floatingText = $(`<h2 id = "floating-text${this.clickCount}" class = "floating-text">+ ${this.shortifyNumber(amount)}</h2>`)
+            let floatingText = $(`<h2 id="floating-text${this.clickCount}" class="floating-text">+ ${this.shortifyNumber(amount)}</h2>`)
             floatingText.css('left', (this.buttonElement.offset().left + Math.floor(Math.random() * 300)) + 'px')
             floatingText.css('top', (this.buttonElement.offset().top + Math.floor(Math.random() * -50)) + 'px')
             $('body').append(floatingText)
@@ -101,27 +153,23 @@ const clickerGame = {
             if ($(`#upgrade${i}`)) {
                 if (!this.upgradeSettings[i].auto) {
                     if (this.upgradeSettings[i].base > this.upgradeSettings[i].mult) {
-                        $(`#upgrade${i}`).text(`Sharpen sword: ${this.upgradeSettings[i].cost}`)
+                        $(`#upgrade${i}`).text(`Sharpen sword: ${this.shortifyNumber(this.upgradeSettings[i].cost)}`)
                     } else {
-                        $(`#upgrade${i}`).text(`Train with knights: ${this.upgradeSettings[i].cost}`)
+                        $(`#upgrade${i}`).text(`Train with knights: ${this.shortifyNumber(this.upgradeSettings[i].cost)}`)
                     }
                 } else {
-                    $(`#upgrade${i}`).text(`Recruit squire: ${this.upgradeSettings[i].cost}`)
+                    $(`#upgrade${i}`).text(`Recruit squire: ${this.shortifyNumber(this.upgradeSettings[i].cost)}`)
                 }
             }
         }
-        this.pointsElement.text(`You have ${this.shortifyNumber(Math.trunc(this.pointsTotal))} points.`)
+        this.pointsElement.text(`You have ${this.shortifyNumber(this.pointsTotal)} points.`)
     },
 
     click: function(rate = 1) {
         this.pointsTotal += (this.pointsBase * this.pointsMultiplier) * rate
-        this.pointsElement.text(`You have ${this.shortifyNumber(Math.trunc(this.pointsTotal))} points.`)
+        this.pointsElement.text(`You have ${this.shortifyNumber(this.pointsTotal)} points.`)
         this.floatingText((this.pointsBase * this.pointsMultiplier) * rate)
         this.clickCount ++
-    },
-
-    randomBonus: function(multiplier = 1) {
-
     },
 
     cheatCode: function(amount = 1000) {
@@ -131,14 +179,12 @@ const clickerGame = {
                 switch (e.key) {
                     case '1':
                         lastKey = '1';
-                        console.log(lastKey)
                         break;
                 }
             } else if (lastKey.length < 2) {
                 switch (e.key) {
                     case '6':
                         lastKey += '6'
-                        console.log(lastKey)
                         break;
                     default:
                         lastKey = null
@@ -148,7 +194,6 @@ const clickerGame = {
                 switch (e.key) {
                     case ('4'):
                         lastKey += '4'
-                        console.log(lastKey)
                         break;
                     default:
                         lastKey = null
@@ -170,12 +215,13 @@ const clickerGame = {
     },
 
     init: function() {
-        this.cheatCode(10000)
+        this.cheatCode()
         this.setupUpgrades()
         this.buttonElement.on('click', (e) => {
             this.click()
         })
         this.autoclicker()
+        this.randomBonus()
     }
 }
 

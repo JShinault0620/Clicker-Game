@@ -68,6 +68,13 @@ body {
     animation: fadeOut 1s;
 }
 
+.bonus {
+    font-size: 2em;
+    color: black;
+    background-color: grey;
+    position: fixed;
+}
+
 @keyframes fadeOut {
     25% {
         opacity: 1
