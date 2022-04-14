@@ -110,6 +110,11 @@ const clickerGame = {
         }
     },
 
+    multiplierDisplay: function() {
+        let multDisplay = $(`<div id="mult-div"><h3 id="base-display">Click Value: 1</h3><h3 id="mult-display">Multiplier: 1</h3><h3 id="auto-display">Auto Value: 0</h3></div>`)
+        $('body').append(multDisplay)
+        this.updateDisplays()
+    },
 
     floatingText: function(amount) {
         if (amount !== 0) {
@@ -163,6 +168,9 @@ const clickerGame = {
             }
         }
         this.pointsElement.text(`You have ${this.shortifyNumber(this.pointsTotal)} points.`)
+        $('#base-display').text(`Click Value: ${this.shortifyNumber(this.pointsBase)}`)
+        $('#mult-display').text(`Multiplier: ${this.shortifyNumber(this.pointsMultiplier)}`)
+        $('#auto-display').text(`Auto Value: ${this.shortifyNumber(this.autoRate)}`)
     },
 
     click: function(rate = 1) {
@@ -221,6 +229,7 @@ const clickerGame = {
             this.click()
         })
         this.autoclicker()
+        this.multiplierDisplay()
     }
 }
 

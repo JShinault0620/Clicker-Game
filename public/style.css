@@ -75,6 +75,22 @@ body {
     position: fixed;
 }
 
+#mult-div {
+    position: fixed;
+    display: flex;
+    flex-direction: row;
+    right: 10px;
+    bottom: 10px;
+    height: 10vh;
+    width: 29vw;
+    background-color: black;
+}
+
+#mult-div > * {
+    color: white;
+    margin: auto;
+}
+
 @keyframes fadeOut {
     25% {
         opacity: 1
